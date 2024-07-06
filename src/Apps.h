@@ -13,6 +13,7 @@ struct CustomApp
     String drawInstructions;
     float scrollposition = 0;
     int16_t scrollDelay = 0;
+    int16_t scrollEndDelay = 0;
     byte lifetimeMode = 0;
     String text;
     uint32_t color;

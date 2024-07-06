@@ -461,34 +461,41 @@ void ShowCustomApp(String name, FastLED_NeoMatrix *matrix, MatrixDisplayUiState 
 
     if (textWidth > availableWidth && !(state->appState == IN_TRANSITION))
     {
-        if (ca->scrollposition + ca->textOffset <= (-textWidth))
+        if (ca->scrollposition + ca->textOffset <= (32 - textWidth))
         {
-            if (ca->iconWasPushed && ca->pushIcon == 2)
+            if(ca->scrollEndDelay > MATRIX_FPS)
             {
-                ca->iconWasPushed = false;
-            }
-            if ((ca->currentRepeat + 1 >= ca->repeat) && (ca->repeat > 0))
-            {
-                DisplayManager.setAutoTransition(true);
-                ca->currentRepeat = 0;
-                DisplayManager.nextApp();
+                if (ca->iconWasPushed && ca->pushIcon == 2)
+                {
+                    ca->iconWasPushed = false;
+                }
+                if ((ca->currentRepeat + 1 >= ca->repeat) && (ca->repeat > 0))
+                {
+                    DisplayManager.setAutoTransition(true);
+                    ca->currentRepeat = 0;
+                    DisplayManager.nextApp();
+                    ca->scrollDelay = 0;
+                    ca->scrollEndDelay = 0;
+                    ca->scrollposition = 9 + ca->textOffset;
+                    return;
+                }
+                else if (ca->repeat > 0)
+                {
+                    ++ca->currentRepeat;
+                }
                 ca->scrollDelay = 0;
+                ca->scrollEndDelay = 0;
                 ca->scrollposition = 9 + ca->textOffset;
-                return;
             }
-            else if (ca->repeat > 0)
-            {
-                ++ca->currentRepeat;
-            }
-            ca->scrollDelay = 0;
-            ca->scrollposition = 9 + ca->textOffset;
+            else
+                ++ca->scrollEndDelay;
         }
     }
     if (!noScrolling)
     {
         if ((ca->scrollDelay > MATRIX_FPS) || ((hasIcon ? ca->textOffset + 9 : ca->textOffset) > 31))
         {
-            if (state->appState == FIXED && !ca->noScrolling)
+            if (state->appState == FIXED && !ca->noScrolling && ca->scrollEndDelay == 0)
             {
                 if (ca->scrollSpeed == -1)
                 {

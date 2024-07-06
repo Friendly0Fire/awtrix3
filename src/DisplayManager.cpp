@@ -1124,6 +1124,7 @@ void ResetCustomApps()
       app.scrollposition = (app.icon ? 9 : 0) + app.textOffset;
       app.iconPosition = 0;
       app.scrollDelay = 0;
+      app.scrollEndDelay = 0;
       app.currentRepeat = 0;
       app.icon.close();
       app.currentFrame = 0;
